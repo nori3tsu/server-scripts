@@ -1,0 +1,57 @@
+#!/bin/bash
+#
+# /etc/rc.d/init.d/utvpnclient
+#
+# chkconfig: - 80 20
+# description: utvpnclient
+# processname: utvpnclient
+#
+
+# Source function library.
+. /etc/init.d/functions
+
+IP_ADDRESS=xxx.xxx.xxx.xxx
+NETMASK=xxx.xxx.xxx.xxx
+BROADCAST=xxx.xxx.xxx.xxx
+
+name=utvpnclient
+prog=utvpnclient
+
+RETVAL=0
+
+start() {
+        echo -n "Starting $name: "
+        /usr/bin/utvpnclient start \
+                && sleep 3 \
+                && /sbin/ifconfig utvpn_utvpn $IP_ADDRESS netmask $NETMASK broadcast $BROADCAST
+        RETVAL=$?
+        return $RETVAL
+}
+
+stop() {
+        echo -n "Shutting down $name: "
+        /usr/bin/utvpnclient stop
+        RETVAL=$?
+}
+
+restart() {
+        stop
+        start
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart)
+        restart
+        ;;
+    *)
+        echo "Usage: $prog {start|stop|restart}"
+        exit 1
+        ;;
+esac
+exit $?
